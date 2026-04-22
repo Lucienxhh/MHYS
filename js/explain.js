@@ -39,6 +39,7 @@ function generateExplain(params) {
     } = params;
 
     const sections = [];
+    const tocTitles = []; // 与 sections 同步的目录标题
 
     /* ─── §0 起卦推导：从数到卦 ─── */
     {
@@ -48,11 +49,7 @@ function generateExplain(params) {
         if (mode === 'date' && gz) {
             const yearZhi  = gz.year.zhi;
             const monthNum = gz.month.zhi;
-            const dayNum   = new Date(
-                document.getElementById("gregYear").value,
-                document.getElementById("gregMonth").value - 1,
-                document.getElementById("gregDay").value
-            ).getDate();
+            const dayNum   = (gz.inputDate && gz.inputDate.day) || 1;
             const hourZhi = gz.hour.zhi;
             const sumUp   = yearZhi + monthNum + dayNum;
             const sumDown = sumUp + hourZhi;
@@ -82,6 +79,7 @@ function generateExplain(params) {
         body += `<table class="exp-gua-ref-table"><tr>${[1,2,3,4,5,6,7,8].map(n => `<td>${n}</td>`).join('')}</tr><tr>${[1,2,3,4,5,6,7,8].map(n => `<td>${GUA_NAMES[n]}</td>`).join('')}</tr></table>`;
 
         sections.push(sec("📐", "起卦推导", body));
+        tocTitles.push("起卦推导");
     }
 
     /* ─── 辅助渲染函数 ─── */
@@ -161,6 +159,7 @@ function generateExplain(params) {
         body += `<p class="exp-tip">本卦为事物的初始状态，上卦代表外在环境，下卦代表内在基础。</p>`;
 
         sections.push(sec("", "本卦 · 两仪生象", body));
+        tocTitles.push("本卦推演");
     }
 
     /* ─── §3 互卦的衍生 ─── */
@@ -208,6 +207,7 @@ function generateExplain(params) {
         body += `<p class="exp-tip">互卦揭示事情的发展过程与中间变化，是本卦走向变卦的"桥梁"。</p>`;
 
         sections.push(sec("", "互卦 · 中间过程", body));
+        tocTitles.push("互卦衍生");
     }
 
     /* ─── §4 变卦的产生 ─── */
@@ -277,6 +277,7 @@ function generateExplain(params) {
         body += `<p class="exp-tip">变卦是事情的最终走向与结果。阳极生阴、阴极生阳，万事终归变化。</p>`;
 
         sections.push(sec("", "变卦 · 动极而变", body));
+        tocTitles.push("变卦产生");
     }
 
     /* ─── §5 体用关系与五行属性 ─── */
@@ -350,6 +351,7 @@ function generateExplain(params) {
         </div>`;
 
         sections.push(sec("⚖️", "体用关系", body));
+        tocTitles.push("体用关系");
     }
 
     /* ─── §7 月令旺衰 ─── */
@@ -413,6 +415,7 @@ function generateExplain(params) {
         </div>`;
 
         sections.push(sec("🌙", "月令旺衰影响", body));
+        tocTitles.push("月令旺衰");
     }
 
     /* ─── §8 方位分析 ─── */
@@ -448,6 +451,7 @@ function generateExplain(params) {
         body += `<p class="exp-tip">方位以体卦五行为基准，凡生体、比和之方位皆宜，克体之方位需避。</p>`;
 
         sections.push(sec("🧭", "方位分析推导", body));
+        tocTitles.push("方位分析");
     }
 
     /* ─── §9 应期推算 ─── */
@@ -500,6 +504,7 @@ function generateExplain(params) {
         body += `<p class="exp-tip">应期可以年、月、日为单位：近期事以"日"论，中期以"月"论，远期大事以"年"论。</p>`;
 
         sections.push(sec("📅", "应期推算过程", body));
+        tocTitles.push("应期推算");
     }
 
     /* ─── 组装输出 ─── */
@@ -510,7 +515,7 @@ function generateExplain(params) {
             <button class="explain-close-btn" onclick="toggleExplainPanel()">✕ 收起</button>
         </div>
         <div class="explain-toc">
-            ${['起卦推导','动爻来源','本卦推演','互卦衍生','变卦产生','各卦五行','体用关系','月令旺衰','方位分析','应期推算'].map((t,i)=>`<a class="toc-item" href="javascript:void(0)" onclick="document.getElementById('exp-sec-${i+1}').scrollIntoView({behavior:'smooth',block:'start'});return false;">${i+1}. ${t}</a>`).join('')}
+            ${tocTitles.map((t,i)=>`<a class="toc-item" href="javascript:void(0)" onclick="document.getElementById('exp-sec-${i+1}').scrollIntoView({behavior:'smooth',block:'start'});return false;">${i+1}. ${t}</a>`).join('')}
         </div>
         ${sections.map((s,i)=>`<div id="exp-sec-${i+1}">${s}</div>`).join('')}
     </div>`;

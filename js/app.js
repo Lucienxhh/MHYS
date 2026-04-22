@@ -8,6 +8,85 @@
     let currentGz = null;
     let lastExplainParams = null; // 保存最近一次断卦的解析参数
 
+    // ── 起卦历史记录（localStorage） ──
+    const HISTORY_KEY = 'mhys_history';
+    const HISTORY_MAX = 20;
+
+    function loadHistory() {
+        try { return JSON.parse(localStorage.getItem(HISTORY_KEY)) || []; }
+        catch(e) { return []; }
+    }
+
+    function saveHistory(params) {
+        const list = loadHistory();
+        // 只保留 generateExplain/renderHistoryList 需要的字段，避免存多余数据
+        const slim = {
+            up: params.up, down: params.down, move: params.move,
+            rawUp: params.rawUp, rawDown: params.rawDown, rawMove: params.rawMove,
+            huU: params.huU, huD: params.huD, bianU: params.bianU, bianD: params.bianD,
+            tiNum: params.tiNum, yongNum: params.yongNum,
+            huTiIdx: params.huTiIdx, huYongIdx: params.huYongIdx,
+            bTiIdx: params.bTiIdx, bYongIdx: params.bYongIdx,
+            tiWx: params.tiWx, yongWx: params.yongWx,
+            monthWx: params.monthWx, monthZhi: params.monthZhi,
+            base: params.base, ws: params.ws,
+            huBase: params.huBase, huWs: params.huWs,
+            bianBase: params.bianBase, bianWs: params.bianWs,
+            yingqi: params.yingqi, spaceHint: params.spaceHint,
+            gz: params.gz,
+            mode: params.mode,
+            inputNums: params.inputNums
+        };
+        const entry = {
+            id: Date.now(),
+            time: new Date().toLocaleString('zh-CN', {hour12: false}),
+            params: slim
+        };
+        list.unshift(entry);
+        if (list.length > HISTORY_MAX) list.splice(HISTORY_MAX);
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(list));
+        return entry;
+    }
+
+    function deleteHistoryEntry(id) {
+        const list = loadHistory().filter(e => e.id !== id);
+        try { localStorage.setItem(HISTORY_KEY, JSON.stringify(list)); } catch(e) {}
+    }
+
+    function clearHistory() {
+        try { localStorage.removeItem(HISTORY_KEY); } catch(e) {}
+    }
+
+    // ── 渲染历史记录列表 ──
+    function renderHistoryList() {
+        let list = loadHistory();
+        // 过滤掉无效条目并同步清理 localStorage
+        const valid = list.filter(e => e && e.params && typeof e.params.up === 'number');
+        if (valid.length !== list.length) {
+            list = valid;
+            try { localStorage.setItem(HISTORY_KEY, JSON.stringify(list)); } catch(e) {}
+        }
+        const wrap = document.getElementById('historyList');
+        if (!wrap) return;
+        if (list.length === 0) {
+            wrap.innerHTML = '<div class="history-empty">暂无记录</div>';
+            return;
+        }
+        wrap.innerHTML = list.map(entry => {
+            const p = entry.params;
+            const upName   = (typeof GUA_NAMES !== 'undefined') ? GUA_NAMES[p.up]   : p.up;
+            const downName = (typeof GUA_NAMES !== 'undefined') ? GUA_NAMES[p.down] : p.down;
+            const label = `${upName}☰ / ${downName} · 动爻 ${p.move}`;
+            return `<div class="history-item" data-id="${entry.id}">
+                <div class="history-item-main" onclick="openHistoryDetail(${entry.id})">
+                    <span class="history-time">${entry.time}</span>
+                    <span class="history-label">${upName} / ${downName}，动爻第 ${p.move} 爻</span>
+                </div>
+                <button class="history-del-btn" onclick="event.stopPropagation();deleteHistoryItem(${entry.id})" title="删除">×</button>
+            </div>`;
+        }).join('');
+    }
+
     // ── 切换解析面板显隐 ──
     window.toggleExplainPanel = function() {
         const area = document.getElementById("explainArea");
@@ -387,6 +466,10 @@ ${move<=3?'下卦（体）':'下卦（用）'}：${GUA_NAMES[bianD]}（${WUXING[
                 alert("已复制到剪贴板");
             });
         };
+
+        // 保存本次起卦记录
+        saveHistory(lastExplainParams);
+        renderHistoryList();
     }
 
     // ── 事件绑定与初始化 ──
@@ -434,5 +517,151 @@ ${move<=3?'下卦（体）':'下卦（用）'}：${GUA_NAMES[bianD]}（${WUXING[
 
         updateGanZhi();
         toggleMode();
+
+        // ── 历史记录面板折叠 ──
+        const historyToggle = document.getElementById('historyToggleBtn');
+        const historyPanel  = document.getElementById('historyPanel');
+        if (historyToggle && historyPanel) {
+            historyToggle.onclick = () => {
+                const open = historyPanel.style.display !== 'none';
+                historyPanel.style.display = open ? 'none' : 'block';
+                historyToggle.classList.toggle('open', !open);
+            };
+        }
+
+        // 初始化渲染历史列表
+        renderHistoryList();
+
+        // 清空历史
+        const clearBtn = document.getElementById('historyClearBtn');
+        if (clearBtn) {
+            clearBtn.onclick = () => {
+                if (!confirm('确认清空所有起卦记录？')) return;
+                clearHistory();
+                renderHistoryList();
+            };
+        }
     });
+
+    // ── 全局：删除单条历史 ──
+    window.deleteHistoryItem = function(id) {
+        deleteHistoryEntry(id);
+        renderHistoryList();
+    };
+
+    // ── 全局：打开历史详情（覆盖层展示）──
+    window.openHistoryDetail = function(id) {
+        const list = loadHistory();
+        const entry = list.find(e => e.id === id);
+        if (!entry) return;
+        // 将数据存入 sessionStorage，history.html 读取
+        sessionStorage.setItem('mhys_detail', JSON.stringify(entry));
+        // 在当前页面渲染历史详情覆盖层
+        renderHistoryDetail(entry);
+    };
+
+    // ── 在当前页面渲染历史详情 ──
+    function renderHistoryDetail(entry) {
+        let overlay = document.getElementById('historyOverlay');
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.id = 'historyOverlay';
+            overlay.className = 'history-overlay';
+            document.body.appendChild(overlay);
+        }
+
+        // 构建与 history.html 相同的推演内容（复用 render.js）
+        const p = entry.params;
+        const stateDesc2 = {
+            "旺":"当令最强，得时得势","相":"次旺蓄势，待发之时",
+            "休":"气已泄退，退休退守","囚":"受制被困，力量不足","死":"最衰无力，全无生机"
+        };
+
+        const benHtml  = renderBenGua(p.up, p.down, p.move, p.tiNum, p.yongNum);
+        const huHtml   = renderPlainGua(p.huU, p.huD, p.move <= 3);
+        const bianHtml = renderPlainGua(p.bianU, p.bianD, p.move <= 3);
+
+        const benAnalysis = `<div class="inline-analysis ia-ben">
+            <div class="ia-row"><span class="ia-ti-label">体-${p.tiWx}-${p.ws.tiState}：</span><span class="ia-state-desc">${stateDesc2[p.ws.tiState]}</span></div>
+            <div class="ia-row"><span class="ia-yong-label">用-${p.yongWx}-${p.ws.yongState}：</span><span class="ia-state-desc">${stateDesc2[p.ws.yongState]}</span></div>
+            <div class="ia-rel-line" style="color:#8e44ad;">${p.base.name}</div>
+        </div>`;
+        const huAnalysis = `<div class="inline-analysis ia-hu">
+            <div class="ia-row"><span class="ia-ti-label">体-${(p.huBase&&WUXING[p.huTiIdx])||'?'}-${p.huWs.tiState}：</span><span class="ia-state-desc">${stateDesc2[p.huWs.tiState]}</span></div>
+            <div class="ia-row"><span class="ia-yong-label">用-${(p.huBase&&WUXING[p.huYongIdx])||'?'}-${p.huWs.yongState}：</span><span class="ia-state-desc">${stateDesc2[p.huWs.yongState]}</span></div>
+            <div class="ia-rel-line" style="color:#d35400;">${p.huBase.name}</div>
+        </div>`;
+        const bianAnalysis = `<div class="inline-analysis ia-bian">
+            <div class="ia-row"><span class="ia-ti-label">体-${(p.bianBase&&WUXING[p.bTiIdx])||'?'}-${p.bianWs.tiState}：</span><span class="ia-state-desc">${stateDesc2[p.bianWs.tiState]}</span></div>
+            <div class="ia-row"><span class="ia-yong-label">用-${(p.bianBase&&WUXING[p.bYongIdx])||'?'}-${p.bianWs.yongState}：</span><span class="ia-state-desc">${stateDesc2[p.bianWs.yongState]}</span></div>
+            <div class="ia-rel-line" style="color:#16a085;">${p.bianBase.name}</div>
+        </div>`;
+
+        overlay.innerHTML = `
+            <div class="history-overlay-backdrop"></div>
+            <div class="history-overlay-content">
+                <div class="history-detail-header-bar">
+                    <span class="history-detail-time-badge">🕐 ${entry.time}</span>
+                    <button class="history-close-btn" id="historyCloseBtn">✕ 关闭</button>
+                </div>
+
+                <!-- 卦象推演 -->
+                <div class="card result-area">
+                    <div class="card-title">🔮 卦象推演</div>
+                    <div class="gua-row-flex">
+                        <div class="gua-column"><div class="stage-title">起因 · 本卦</div>${benHtml}${benAnalysis}</div>
+                        <div class="gua-column"><div class="stage-title">过程 · 互卦</div>${huHtml}${huAnalysis}</div>
+                        <div class="gua-column"><div class="stage-title">结局 · 变卦</div>${bianHtml}${bianAnalysis}</div>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="info-list">
+                        <div class="spacetime-box"><strong>🧭 方位提示</strong> ${p.spaceHint}</div>
+                        <div class="spacetime-box"><strong>📅 应期参考</strong> ${p.yingqi}</div>
+                    </div>
+                </div>
+
+                <!-- 卦象解析折叠条 -->
+                <div class="explain-collapsed-bar" style="display:block; margin-top:12px;">
+                    <div class="explain-bar-content" id="historyExplainBtn">🔍 卦象解析</div>
+                </div>
+
+                <!-- 卦象解析面板 -->
+                <div class="card explain-area" id="historyExplainArea" style="display:none;">
+                    <div id="historyExplainContent"></div>
+                </div>
+            </div>
+        `;
+
+        // 显示
+        document.body.style.overflow = 'hidden';
+        overlay.style.display = 'flex';
+
+        // 关闭按钮
+        document.getElementById('historyCloseBtn').onclick = closeHistoryOverlay;
+        overlay.querySelector('.history-overlay-backdrop').onclick = closeHistoryOverlay;
+
+        // 解析面板展开/收起
+        document.getElementById('historyExplainBtn').onclick = function() {
+            const area    = document.getElementById('historyExplainArea');
+            const bar     = area.previousElementSibling;
+            const content = document.getElementById('historyExplainContent');
+            if (area.style.display !== 'none') {
+                area.style.display = 'none';
+                bar.style.display = 'block';
+            } else {
+                content.innerHTML = generateExplain(p);
+                area.style.display = 'block';
+                bar.style.display = 'none';
+                area.scrollIntoView({behavior: 'smooth', block: 'start'});
+            }
+        };
+    }
+
+    function closeHistoryOverlay() {
+        const overlay = document.getElementById('historyOverlay');
+        if (overlay) {
+            overlay.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+    }
 })();
