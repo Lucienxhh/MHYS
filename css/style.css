@@ -1,0 +1,1092 @@
+* { box-sizing: border-box; margin: 0; }
+body {
+    background: #f5efe6;
+    font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+    padding: clamp(12px, 3vw, 20px);
+    padding-top: max(clamp(12px, 3vw, 20px), env(safe-area-inset-top));
+    padding-bottom: max(clamp(12px, 3vw, 20px), env(safe-area-inset-bottom));
+    color: #2e241b;
+    -webkit-text-size-adjust: 100%;
+}
+.container { max-width: 860px; width: 100%; margin: 0 auto; }
+h1 {
+    text-align: center;
+    font-weight: 400;
+    letter-spacing: clamp(3px, 1vw, 6px);
+    color: #6b4f3c;
+    border-bottom: 2px solid #dac5b4;
+    padding-bottom: clamp(10px, 2vw, 15px);
+    margin-bottom: clamp(16px, 3vw, 25px);
+    font-size: clamp(20px, 4vw, 28px);
+}
+.card {
+    background: #fffbf7;
+    border-radius: clamp(14px, 2.5vw, 24px);
+    padding: clamp(14px, 2.5vw, 22px) clamp(14px, 2.5vw, 25px);
+    margin-bottom: clamp(16px, 3vw, 25px);
+    box-shadow: 0 8px 18px rgba(100,70,40,0.08);
+    border: 1px solid #ede3d9;
+}
+.card-title { font-size: clamp(17px, 3vw, 21px); font-weight: 700; margin-bottom: 12px; color: #3a2e24; border-left: 5px solid #b28b6f; padding-left: 14px; letter-spacing: 0.5px; }
+.card-subtitle { font-size: 14px; color: #7a6453; margin-bottom: 15px; margin-left: 19px; }
+.hint-box { background: #f3ede7; border-radius: 14px; padding: 12px 14px; margin-bottom: 16px; font-size: 14px; color: #5a3f2e; border-left: 4px solid #b28b6f; }
+.input-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 140px), 1fr)); gap: 12px 16px; }
+.input-row { display: flex; gap: clamp(6px, 1.5vw, 8px); align-items: flex-end; flex-wrap: wrap; }
+.input-item.compact { flex: 1; min-width: 44px; max-width: 80px; }
+.input-item.compact.date-short { max-width: 62px; }
+.input-item.compact.date-year { max-width: 84px; }
+.input-item.compact input { height: 32px; padding: 4px 6px; font-size: 13px; text-align: center; }
+.input-item.compact label { font-size: 11px; margin-bottom: 3px; }
+.input-item.compact input::placeholder { color: #b8a898; font-weight: 500; }
+/* 日期输入框：数字+后缀同行 */
+.date-field {
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 100%;
+}
+.date-field input.date-input {
+    width: 100%;
+    padding-right: 24px;
+    box-sizing: border-box;
+}
+.date-suffix {
+    position: absolute;
+    right: 7px;
+    font-size: 13px;
+    color: #8b7b6b;
+    font-weight: 500;
+    pointer-events: none;
+    line-height: 1;
+}
+.input-item.compact-num { flex: 1; min-width: 44px; max-width: 70px; }
+.input-item.compact-num input { height: 32px; padding: 4px 6px; font-size: 13px; text-align: center; }
+.input-item.compact-num label { font-size: 11px; margin-bottom: 3px; }
+.input-section-row { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; }
+.input-section { flex: 1; min-width: 240px; }
+.section-label { font-size: 13px; font-weight: 600; color: #7a6453; margin-bottom: 8px; }
+.two-card-row { display: flex; gap: clamp(12px, 2vw, 20px); align-items: stretch; }
+
+/* ── 时令参考面板（数字起卦） ── */
+.time-ref-toggle {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    padding: 6px 12px;
+    background: #f3ede7;
+    border-radius: 10px;
+    border: 1px solid #e0d5c8;
+    width: fit-content;
+}
+.time-ref-option {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #7a6453;
+    cursor: pointer;
+    user-select: none;
+    padding: 4px 0;
+    transition: color 0.2s;
+}
+.time-ref-option.active { color: #5a3f2e; font-weight: 600; }
+.time-ref-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid #b28b6f;
+    background: #fffbf7;
+    flex-shrink: 0;
+    transition: all 0.2s;
+}
+.time-ref-option.active .time-ref-dot {
+    border-color: #8b6f5c;
+    background: #8b6f5c;
+    box-shadow: inset 0 0 0 3px #fffbf7;
+}
+.time-ref-content {
+    padding: 8px 12px;
+    background: #f8f4ef;
+    border-radius: 8px;
+    border: 1px solid #e8ddd3;
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+.half-card { flex: 1; min-width: 0; }
+.ti-yong-wuxing-row { display: flex; gap: 30px; align-items: center; justify-content: center; margin: 20px 0; }
+.ti-yong-intro-box { display: flex; flex-direction: column; gap: 15px; padding: 20px; background: linear-gradient(135deg, #f3ede7 0%, #e8ddd3 100%); border-radius: 16px; border: 2px solid #dac5b4; }
+.rule-tooltip { position: relative; cursor: help; font-size: 14px; color: #8b6f5c; }
+.rule-tooltip-text { visibility: hidden; position: absolute; left: 100%; top: 50%; transform: translateY(-50%); margin-left: 8px; width: 280px; background: #fffbf7; border: 1px solid #d4c4b0; border-radius: 8px; padding: 10px; font-size: 12px; line-height: 1.6; color: #5a3f2e; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 100; white-space: normal; }
+.rule-tooltip:hover .rule-tooltip-text, .rule-tooltip-text.show { visibility: visible; }
+.compact-row { gap: 6px; }
+.input-item { display: flex; flex-direction: column; }
+.input-item label { font-size: 14px; font-weight: 500; color: #6b4f3c; margin-bottom: 5px; }
+.input-item input, .input-item select {
+    padding: 10px 12px;
+    border: 1.5px solid #dfd1c4;
+    border-radius: 14px;
+    font-size: clamp(14px, 2vw, 15px);
+    background: white;
+    min-height: 44px;
+}
+.input-item input:disabled { background: #ede3d9; color: #5a3f2e; }
+.btn {
+    background: #8b6f5c;
+    color: white;
+    border: none;
+    border-radius: 40px;
+    padding: clamp(10px, 1.5vw, 14px) clamp(18px, 3vw, 28px);
+    font-size: clamp(15px, 2.5vw, 18px);
+    font-weight: 500;
+    letter-spacing: 2px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(100,70,40,0.15);
+    margin-top: 12px;
+    transition: all 0.2s;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.btn:hover { background: #6b4f3c; transform: translateY(-2px); }
+.btn-small {
+    background: #b7a089;
+    padding: 8px 18px;
+    font-size: 14px;
+    margin-left: 10px;
+    min-height: 40px;
+}
+.btn-now-time { margin-left: 6px; height: 32px; align-self: flex-end; flex-shrink: 0; }
+.result-area { background: #fcf9f5; }
+.gua-stack { display: flex; flex-direction: column; align-items: center; width: 120px; text-align: center; }
+.gua-trigram { display: flex; flex-direction: column; align-items: center; width: 100%; text-align: center; }
+.gua-yao-row { display: flex; justify-content: center; align-items: center; gap: 0; margin: 4px 0; height: 24px; }
+
+/* 每个卦的整体容器：固定宽度，所有内容居中 */
+.gua-column { display: flex; flex-direction: column; align-items: center; gap: 8px; width: clamp(160px, 20vw, 220px); }
+
+.yueling-tag {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 8px 6px;
+    background: linear-gradient(180deg, #f3ede7 0%, #e8ddd3 100%);
+    border-radius: 12px;
+    border: 1px solid #dac5b4;
+    min-width: 36px;
+    font-size: 11px;
+    color: #5a3f2e;
+    line-height: 1.6;
+}
+.yueling-icon { font-size: 18px; margin-bottom: 4px; }
+.yueling-month { font-weight: 700; font-size: 12px; }
+.yueling-wx { font-size: 10px; color: #7a6453; }
+.gua-content { display: flex; flex-direction: column; align-items: center; flex: 1; }
+.yao-line { font-size: 32px; line-height: 1; }
+.dong-yao { color: #c0392b !important; background-color: #fdeaea; border-radius: 4px; padding: 1px 2px; }
+
+/* ── 用 CSS 精确绘制爻线（替代Unicode字符 ⚊⚋）── */
+.yao-bar {
+    display: inline-block;
+    height: 10px;
+    background: linear-gradient(180deg, #5a4a3a 0%, #3a2e24 100%);
+    border-radius: 5px;
+    flex-shrink: 0;
+}
+.yao-yang {
+    width: clamp(60px, 8vw, 88px);
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+.yao-yin {
+    display: inline-flex;
+    width: clamp(60px, 8vw, 88px);  /* 与阳爻总宽度一致 */
+    gap: clamp(5px, 1.2vw, 12px);
+    align-items: center;
+}
+.yao-yin-segment {
+    flex: 1;                          /* 两段均分剩余空间 */
+    height: 10px;
+    background: linear-gradient(180deg, #5a4a3a 0%, #3a2e24 100%);
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+.gua-label { font-size: 16px; color: #5e4435; font-weight: 500; }
+.ti-yong-badge { display: inline-block; border-radius: 20px; padding: 2px 12px; font-size: 14px; margin-left: 8px; font-weight: 700; }
+
+/* 卦中五行文字统一样式（按五行着色） */
+.wx-jin { color: #b8860b; font-weight: 500; }
+.wx-mu  { color: #27ae60; font-weight: 500; }
+.wx-shui{ color: #2980b9; font-weight: 500; }
+.wx-huo { color: #c0392b; font-weight: 500; }
+.wx-tu  { color: #a0714a; font-weight: 500; }
+
+/* 三卦阶段标签 */
+.stage-title { font-weight: 700; margin-bottom: 10px; letter-spacing: 2px; font-size: 15px; color: #5a3f2e; }
+/* 上卦下卦之间的分隔线（三卦共用） */
+.gua-divider { border-top: 2px dashed #dac5b4; width: 100%; margin: 10px 0; }
+/* 卦名+五行 统一布局行 */
+.gua-meta-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    margin-top: 5px;
+}
+
+/* ── 新：体用标注系统（本卦中仅文字色标示）── */
+/* 上卦/下卦 + 体/用 文字标签 */
+.gua-pos-label {
+    font-size: 16px;
+    font-weight: 500;
+    margin-left: 0;
+    white-space: nowrap;
+}
+.pos-label-ti { color: #c0392b; }
+.pos-label-yong { color: #a0714a; }
+
+/* ── 卦下三行纯文字分析 ── */
+.inline-analysis {
+    margin-top: 10px;
+    margin-inline: auto;
+    padding: 6px 8px;
+    border-radius: 10px;
+    background: #fffbf7;
+    text-align: center;
+    font-size: 12.5px;
+    line-height: 1.85;
+    letter-spacing: 0.5px;
+    width: auto;
+}
+.ia-ben, .ia-hu, .ia-bian { border: 1px solid #d4c4b0; background: #fffbf7; }
+.ia-row { display: flex; align-items: baseline; justify-content: center; gap: 2px; }
+.ia-ti-label { color: #c0392b; font-weight: 700; white-space: nowrap; min-width: 22px; }
+.ia-yong-label{ color: #a0714a; font-weight: 700; white-space: nowrap; min-width: 22px; }
+.ia-wx-text { color: #5a3f2e; }
+.ia-state-tag { font-weight: 700; font-size: 11.5px; letter-spacing: 1px; padding: 1px 6px; border-radius: 8px; }
+.ia-rel-line { text-align: center; font-weight: 600; font-size: 14px; letter-spacing: 1px; padding-top: 2px; border-top: 1px dashed #e0d5ca; margin-top: 2px; }
+.gua-row-flex { display: flex; flex-wrap: wrap; justify-content: center; gap: clamp(16px, 3vw, 40px); margin: 16px 0; }
+.divider { height: 1px; background: linear-gradient(to right, transparent, #dac5b4, transparent); margin: 22px 0; }
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 25px; }
+.info-label { font-weight: 600; color: #5a3f2e; }
+.highlight { background: #f3ede7; padding: 12px 18px; border-radius: 18px; border-left: 5px solid #b28b6f; margin: 18px 0; }
+.spacetime-box { background: #e8ddd3; padding: 12px 18px; border-radius: 18px; margin-top: 12px; }
+.ganzhi-badge { display: inline-block; background: #d4c3b6; padding: 4px 14px; border-radius: 30px; font-weight: 600; }
+.footnote { text-align: right; font-size: 13px; color: #a18b7c; margin-top: 15px; }
+.mode-switch { display: flex; align-items: center; gap: 20px; margin-bottom: 15px; }
+
+/* ── 导出区域 ── */
+.export-area { margin-top: 18px; padding: 16px 20px; background: #f3ede7; border-radius: 16px; }
+.export-area textarea { width: 100%; min-height: 140px; border: 1.5px solid #dfd1c4; border-radius: 12px; padding: 12px 14px; font-size: 13px; font-family: 'Microsoft YaHei', sans-serif; line-height: 1.75; resize: vertical; background: #fffbf7; color: #3a2e24; margin-top: 10px; }
+.export-btn { background: #5a3f2e; color: white; border: none; border-radius: 30px; padding: 8px 22px; font-size: 14px; cursor: pointer; font-weight: 500; letter-spacing: 1px; transition: all 0.2s; }
+.export-btn:hover { background: #3a2e24; transform: translateY(-1px); }
+.copy-btn { background: #8b6f5c; margin-left: 10px; }
+
+/* ── 左侧信息列 ── */
+.left-info-column { display: flex; flex-direction: column; align-items: center; width: 140px; flex-shrink: 0; }
+.yueling-box {
+    width: 100%;
+    height: 120px;
+    background: linear-gradient(135deg, #f3ede7 0%, #e8ddd3 100%);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border: 2px solid #dac5b4;
+    margin-bottom: 20px;
+}
+.ti-intro, .yong-intro {
+    font-size: 11px;
+    color: #5a3f2e;
+    line-height: 1.4;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    width: 100%;
+}
+.ti-intro strong, .yong-intro strong {
+    color: #8b4513;
+    font-size: 16px;
+    flex-shrink: 0;
+    width: 16px;
+    text-align: center;
+    line-height: 1.4;
+}
+.yueling-label { font-size: 13px; color: #7a6453; font-weight: 500; }
+.yueling-zhi { font-size: 20px; font-weight: 700; color: #5a3f2e; }
+.yueling-wx { font-size: 14px; font-weight: 600; padding: 2px 10px; border-radius: 12px; background: #d4c3b6; }
+
+/* ── 五行五边形 - 正五边形排列 ── */
+.wuxing-pentagon {
+    position: relative;
+    width: 160px;
+    height: 160px;
+    margin: 0 auto;
+}
+.wx-item {
+    position: absolute;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #f3ede7;
+    border: 2px solid;
+    z-index: 2;
+    font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+}
+.wx-item:hover {
+    transform: scale(1.2);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    z-index: 3;
+}
+.wx-center {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 700;
+    background: #fff;
+    border: 3px solid #8b4513;
+    color: #8b4513;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+}
+.wx-item.active {
+    background: #e8ddd3;
+}
+
+/* 正五边形五个顶点 - 土在正上方(月令)，按相生顺序顺时针排列 */
+.wx-item.wx-tu {
+    top: 0px;
+    left: 62px;
+    color: #a0714a;
+    border-color: #a0714a;
+}
+.wx-item.wx-huo {
+    top: 48px;
+    right: 0px;
+    color: #c0392b;
+    border-color: #c0392b;
+}
+.wx-item.wx-mu {
+    bottom: 14px;
+    right: 12px;
+    color: #27ae60;
+    border-color: #27ae60;
+}
+.wx-item.wx-shui {
+    bottom: 14px;
+    left: 12px;
+    color: #2980b9;
+    border-color: #2980b9;
+}
+.wx-item.wx-jin {
+    top: 48px;
+    left: 0px;
+    color: #b8860b;
+    border-color: #b8860b;
+}
+
+/* ── 箭头 ── */
+.arrow-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+}
+.arrow-svg.show { opacity: 1; }
+.arrow-line { fill: none; stroke-width: 1.5; marker-end: url(#arrowhead); }
+.arrow-loop { fill: none; stroke-width: 2.5; }
+.state-label { font-size: 12px; font-weight: 700; text-anchor: middle; font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif; }
+
+/* ══════════════════════════════════════════════
+   响应式断点
+══════════════════════════════════════════════ */
+
+/* ── 平板（768px 以下）── */
+@media (max-width: 768px) {
+    .left-info-column { width: 120px; }
+    .wuxing-pentagon { width: 130px; height: 130px; }
+}
+
+/* ── 手机（640px 以下）── */
+@media (max-width: 640px) {
+    /* 双卡片上下堆叠 */
+    .two-card-row { flex-direction: column; }
+
+    /* 信息网格单列 */
+    .info-grid { grid-template-columns: 1fr; gap: 12px; }
+
+    /* 卦象结果紧凑排列（三卦保持同行） */
+    .gua-row-flex { gap: 8px; }
+    .gua-column { width: 30%; min-width: 0; }
+    .gua-stack { width: 80px; }
+
+    /* 缩小标题与分析区域 */
+    .stage-title { font-size: 13px; letter-spacing: 1px; margin-bottom: 6px; }
+    .inline-analysis { padding: 4px 4px; }
+    .ia-row { flex-wrap: wrap; justify-content: center; }
+    .ia-ti-label, .ia-yong-label { min-width: unset; }
+    .ia-rel-line { font-size: 12px; }
+
+    /* 左侧信息列全宽 */
+    .ti-yong-wuxing-row { flex-direction: column; gap: 12px; }
+
+    /* 左侧月令信息缩小 */
+    .left-info-column { width: 100px; flex-shrink: 1; }
+    .yueling-box { height: 90px; margin-bottom: 10px; }
+    .yueling-zhi { font-size: 16px; }
+
+    /* 五行五边形缩小 */
+    .wuxing-pentagon { width: 110px; height: 110px; }
+    .wx-item { width: 30px; height: 30px; font-size: 13px; }
+    .wx-center { width: 34px; height: 34px; font-size: 15px; }
+
+    /* 导出区域 */
+    .export-area { padding: 12px 14px; }
+
+    /* tooltip 改为底部弹出（移动端左侧放不下） */
+    .rule-tooltip-text {
+        left: 50%;
+        top: 100%;
+        transform: translateX(-50%);
+        margin-left: 0;
+        margin-top: 6px;
+        width: calc(100vw - 40px);
+        max-width: 280px;
+    }
+}
+
+/* ── 小屏手机（400px 以下）── */
+@media (max-width: 400px) {
+    .input-row { gap: 4px; }
+    .input-item.compact { max-width: 56px; }
+    .input-item.compact.date-short { max-width: 48px; }
+    .input-item.compact-num { max-width: 50px; }
+
+    .btn-small { padding: 7px 12px; font-size: 13px; margin-left: 6px; }
+
+    .gua-stack { width: 60px; }
+    .gua-row-flex { gap: 4px; }
+    .stage-title { font-size: 11px; letter-spacing: 0.5px; margin-bottom: 4px; }
+
+    .wuxing-pentagon { width: 96px; height: 96px; }
+    .wx-item { width: 26px; height: 26px; font-size: 12px; }
+    .wx-center { width: 30px; height: 30px; font-size: 13px; }
+}
+
+/* ── 触摸设备：增大触摸目标 ── */
+@media (pointer: coarse) {
+    .btn { min-height: 48px; }
+    .btn-small { min-height: 44px; }
+    .explain-close-btn { min-height: 44px; padding: 8px 16px; }
+    .toc-item { min-height: 36px; padding: 6px 12px; }
+    .input-item input, .input-item select { min-height: 48px; }
+    .input-item.compact input { min-height: 40px; }
+    .input-item.compact-num input { min-height: 40px; }
+}
+
+/* ── 无 hover 设备：移除 hover 效果依赖 ── */
+@media (hover: none) {
+    .toc-item:hover { background: #fff; color: #365c53; border-color: #c5ddd9; }
+    .toc-item:active { background: #4a7a6e; color: #fff; border-color: #4a7a6e; }
+    .wx-item:hover { transform: none; box-shadow: none; }
+}
+
+/* ══════════════════════════════════════════════
+   解析按钮
+══════════════════════════════════════════════ */
+.btn-explain {
+    background: #4a7a6e;
+    font-size: 16px;
+    padding: 13px 26px;
+}
+.btn-explain:hover { background: #365c53; }
+.btn-explain:disabled {
+    background: #a8b8b4;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* ══════════════════════════════════════════════
+   解析面板折叠横条
+══════════════════════════════════════════════ */
+.explain-collapsed-bar {
+    margin-bottom: 25px;
+}
+.explain-bar-content {
+    background: linear-gradient(135deg, #4a7a6e 0%, #365c53 100%);
+    color: white;
+    border-radius: 14px;
+    padding: 14px 24px;
+    font-size: clamp(16px, 2.8vw, 19px);
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 3px 10px rgba(74,122,110,0.25);
+    transition: all 0.2s;
+    user-select: none;
+}
+.explain-bar-content:hover {
+    background: linear-gradient(135deg, #3d6b60 0%, #2a4a3e 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 5px 14px rgba(74,122,110,0.3);
+}
+.explain-bar-content:active {
+    transform: translateY(0);
+}
+.explain-bar-content.disabled {
+    background: #c8d4d1;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+/* ══════════════════════════════════════════════
+   解析面板容器
+══════════════════════════════════════════════ */
+.explain-area {
+    background: #f7fbfa;
+    border: 1px solid #c5ddd9;
+}
+.explain-panel {
+    font-size: 14px;
+    line-height: 1.7;
+    color: #2a3a35;
+}
+.explain-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: clamp(10px, 2vw, 14px) clamp(14px, 2.5vw, 20px);
+    background: linear-gradient(135deg, #4a7a6e 0%, #365c53 100%);
+    border-radius: clamp(10px, 2vw, 16px) clamp(10px, 2vw, 16px) 0 0;
+    margin: calc(-1 * clamp(14px, 2.5vw, 22px)) calc(-1 * clamp(14px, 2.5vw, 25px)) 16px calc(-1 * clamp(14px, 2.5vw, 25px));
+}
+.explain-header-icon { font-size: 20px; }
+.explain-header-title { flex: 1; font-size: clamp(14px, 2.5vw, 18px); font-weight: 700; color: white; letter-spacing: 2px; }
+.explain-close-btn {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    color: white;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.2s;
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+}
+.explain-close-btn:hover { background: rgba(255,255,255,0.35); }
+
+/* ── 目录 ── */
+.explain-toc {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px 8px;
+    margin-bottom: 18px;
+    padding: 10px 12px;
+    background: #e8f3f1;
+    border-radius: 12px;
+    border: 1px solid #c5ddd9;
+}
+.toc-item {
+    font-size: clamp(11px, 1.8vw, 12.5px);
+    color: #365c53;
+    text-decoration: none;
+    padding: 5px 10px;
+    border-radius: 14px;
+    background: #fff;
+    border: 1px solid #c5ddd9;
+    transition: all 0.18s;
+    white-space: nowrap;
+    min-height: 32px;
+    display: inline-flex;
+    align-items: center;
+}
+.toc-item:hover {
+    background: #4a7a6e;
+    color: #fff;
+    border-color: #4a7a6e;
+}
+
+/* ── 章节 ── */
+.exp-section {
+    margin-bottom: 28px;
+    border: 1px solid #d0e8e4;
+    border-radius: 14px;
+    overflow: hidden;
+    scroll-margin-top: 20px;
+}
+.exp-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #2a3a35;
+    background: linear-gradient(135deg, #d9efeb 0%, #c5ddd9 100%);
+    padding: 10px 18px;
+    letter-spacing: 2px;
+    border-bottom: 1px solid #c5ddd9;
+}
+.exp-body {
+    padding: 16px 18px;
+    background: #fafdfd;
+}
+
+/* ── 通用段落 ── */
+.exp-intro {
+    color: #3a5a52;
+    margin-bottom: 10px;
+    font-size: 13.5px;
+}
+.exp-tip {
+    color: #5a7a72;
+    font-size: 12.5px;
+    font-style: italic;
+    margin-top: 10px;
+    padding: 8px 12px;
+    background: #e8f3f1;
+    border-radius: 8px;
+    border-left: 3px solid #4a7a6e;
+}
+.exp-highlight {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #2a4a40;
+    padding: 8px 14px;
+    background: #d4ede8;
+    border-radius: 10px;
+    margin: 10px 0;
+}
+.exp-divider {
+    height: 1px;
+    background: linear-gradient(to right, transparent, #c5ddd9, transparent);
+    margin: 12px 0;
+}
+
+/* ── 行布局 ── */
+.exp-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 4px 0;
+    border-bottom: 1px solid #e8f3f1;
+    font-size: clamp(12px, 1.8vw, 13px);
+    flex-wrap: wrap;
+}
+.exp-row:last-child { border-bottom: none; }
+.exp-label {
+    color: #5a7a72;
+    min-width: clamp(60px, 10vw, 90px);
+    font-weight: 600;
+    flex-shrink: 0;
+}
+.exp-val { color: #2a3a35; font-weight: 500; }
+.exp-note { color: #7a9e98; font-size: 12px; }
+
+/* ── 推导公式 ── */
+.exp-formula {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 14px;
+    background: #e8f3f1;
+    border-radius: 10px;
+    margin: 6px 0;
+    font-size: 13px;
+    flex-wrap: wrap;
+}
+.exp-expr  { color: #2a4a40; font-family: 'Consolas', monospace; }
+.exp-arrow { color: #4a7a6e; font-weight: 700; font-size: 16px; }
+.exp-result { color: #2a3a35; font-weight: 700; font-size: 14px; }
+.exp-comment { color: #5a7a72; font-size: 12px; }
+
+/* ── 五行标签 ── */
+.exp-wx {
+    font-weight: 700;
+    padding: 1px 8px;
+    border-radius: 10px;
+    font-size: 13px;
+    background: rgba(0,0,0,0.04);
+}
+.exp-state {
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 1px;
+}
+.exp-gua {
+    font-size: 15px;
+    font-weight: 700;
+    color: #2a3a35;
+}
+
+/* ── 爻象图 ── */
+.exp-gua-diagram {
+    display: flex;
+    gap: clamp(10px, 2vw, 20px);
+    flex-wrap: wrap;
+    margin: 10px 0;
+}
+.exp-gua-col {
+    background: #e8f3f1;
+    border-radius: 12px;
+    padding: 10px clamp(10px, 2vw, 14px);
+    min-width: 0;
+    flex: 1 1 140px;
+}
+.exp-gua-name {
+    font-weight: 700;
+    color: #2a4a40;
+    font-size: 13px;
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #c5ddd9;
+}
+.exp-yao-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+    font-size: 13px;
+    color: #3a5a52;
+}
+.exp-yao-row.is-dong {
+    background: #fff3e0;
+    border-radius: 6px;
+    padding: 4px 8px;
+    margin: 2px -4px;
+}
+.exp-yao-idx { font-size: 11px; color: #7a9e98; }
+
+/* ── 互卦衍生 ── */
+.exp-hu-rule {
+    display: flex;
+    gap: clamp(10px, 2vw, 16px);
+    flex-wrap: wrap;
+    margin: 10px 0;
+}
+.exp-hu-block {
+    flex: 1 1 140px;
+    background: #e8f3f1;
+    border-radius: 12px;
+    padding: 10px clamp(10px, 2vw, 14px);
+}
+.exp-hu-label {
+    font-weight: 700;
+    color: #2a4a40;
+    font-size: 13px;
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #c5ddd9;
+}
+.exp-hu-result {
+    margin-top: 8px;
+    font-weight: 700;
+    color: #4a7a6e;
+    font-size: 14px;
+    padding-top: 6px;
+    border-top: 1px solid #c5ddd9;
+}
+
+/* ── 变卦 ── */
+.exp-change-rule {
+    background: #e8f3f1;
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin: 10px 0;
+}
+.exp-change-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 0;
+    border-bottom: 1px solid #c5ddd9;
+    font-size: 13px;
+}
+.exp-change-row:last-child { border-bottom: none; }
+
+/* ── 表格 ── */
+.exp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: clamp(11px, 1.8vw, 13px);
+    margin: 10px 0;
+    border-radius: 10px;
+    overflow: hidden;
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+.exp-table thead { background: #c5ddd9; }
+.exp-table th {
+    padding: 8px clamp(8px, 1.5vw, 12px);
+    text-align: left;
+    color: #2a4a40;
+    font-weight: 700;
+    font-size: clamp(11px, 1.6vw, 12px);
+    white-space: nowrap;
+}
+.exp-table td {
+    padding: 7px clamp(8px, 1.5vw, 12px);
+    border-bottom: 1px solid #e8f3f1;
+    color: #2a3a35;
+}
+.exp-table tbody tr:hover { background: #e8f3f1; }
+.exp-table tbody tr:last-child td { border-bottom: none; }
+
+/* ── 五行生克图例 ── */
+.exp-wuxing-legend {
+    background: #e8f3f1;
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-top: 10px;
+    font-size: 12.5px;
+}
+.exp-wx-rule { color: #3a5a52; padding: 2px 0; }
+
+/* ── 八卦对照表（起卦推导 + 体用关系共用） ── */
+
+/* ── 八卦对照表（2行8列） ── */
+.exp-gua-ref-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 8px 0;
+    text-align: center;
+    font-size: 13px;
+    border: 1px solid #c9b8a8;
+}
+.exp-gua-ref-table td {
+    padding: 5px 4px;
+    border: 1px solid #c9b8a8;
+}
+.exp-gua-ref-table tr:first-child td {
+    font-weight: 700;
+    color: #5a3f2e;
+    border-bottom: 2px solid #c9b8a8;
+}
+
+/* ── 体用关系 ── */
+.exp-tiyong-rule {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 10px 0;
+}
+.exp-rule-box {
+    flex: 1 1 130px;
+    padding: 10px clamp(10px, 2vw, 14px);
+    border-radius: 10px;
+    border: 2px solid #c5ddd9;
+    background: #f0f8f6;
+    font-size: clamp(12px, 1.8vw, 13px);
+    transition: all 0.2s;
+}
+.exp-rule-box.active {
+    border-color: #4a7a6e;
+    background: #d4ede8;
+    box-shadow: 0 2px 8px rgba(74,122,110,0.15);
+}
+.exp-rule-title {
+    font-weight: 700;
+    color: #2a4a40;
+    font-size: 12.5px;
+    margin-bottom: 5px;
+}
+.exp-rule-body { color: #3a5a52; }
+
+.exp-rel-box {
+    background: #f7fbfa;
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin: 12px 0;
+}
+.exp-rel-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+.exp-rel-formula {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    margin: 6px 0;
+}
+.exp-rel-arrow {
+    font-weight: 700;
+    font-size: 14px;
+    padding: 2px 6px;
+    border-radius: 6px;
+}
+.rel-bihe  { color: #8e44ad; background: #f3e5f5; }
+.rel-sheng { color: #27ae60; background: #e8f5e9; }
+.rel-ke    { color: #e74c3c; background: #fdeaea; }
+.exp-rel-tip { font-size: 13px; color: #3a5a52; margin: 4px 0; font-weight: 600; }
+.exp-rel-desc { font-size: 12.5px; color: #5a7a72; }
+
+.exp-sub-rel {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+.exp-sub-rel-item {
+    flex: 1 1 130px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: #f0f8f6;
+    font-size: clamp(12px, 1.8vw, 12.5px);
+    color: #2a3a35;
+}
+.exp-sub-desc { display: block; color: #5a7a72; font-size: 12px; margin-top: 3px; }
+
+/* ── 旺衰 ── */
+.exp-wangshuai-conclude {
+    background: #e8f3f1;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: #2a3a35;
+    margin: 10px 0;
+    border-left: 4px solid #4a7a6e;
+}
+/* ── 方位 ── */
+.exp-dir-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 5px 0;
+    border-bottom: 1px solid #e8f3f1;
+    font-size: 13px;
+    flex-wrap: wrap;
+}
+.exp-dir-row:last-child { border-bottom: none; }
+.exp-rel-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 10px;
+    flex-shrink: 0;
+}
+.rel-生体 { background: #e8f5e9; color: #27ae60; }
+.rel-比和 { background: #f3e5f5; color: #8e44ad; }
+.rel-克体 { background: #fdeaea; color: #e74c3c; }
+.rel-体生 { background: #fff3e0; color: #e67e22; }
+.rel-体克 { background: #e3f2fd; color: #2980b9; }
+.exp-dir-conclude {
+    background: #e8f3f1;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: #2a3a35;
+    margin: 12px 0 0;
+    border-left: 4px solid #4a7a6e;
+}
+
+/* ── 应期步骤 ── */
+.exp-yingqi-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 10px 0;
+}
+.exp-step {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    background: #e8f3f1;
+    border-radius: 12px;
+    padding: 12px 16px;
+}
+.exp-step-num {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    border-radius: 50%;
+    background: #4a7a6e;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+.exp-step-body { flex: 1; font-size: 13px; color: #2a3a35; }
+.exp-step-title { font-weight: 700; color: #2a4a40; margin-bottom: 4px; font-size: 13.5px; }
+.exp-step-body p { margin: 3px 0; }
+
+/* ── 卦序对照表：高亮当前卦 ── */
+.exp-gua-order-table .exp-row-active {
+    background: #d4ede8;
+    font-weight: 600;
+}
+.exp-gua-order-table .exp-row-active td {
+    color: #2a4a40;
+    border-bottom-color: #b0d4cc;
+}
+
+/* ── 解析面板内嵌爻线适配 ── */
+.explain-area .yao-bar {
+    background: linear-gradient(180deg, #4a6a60 0%, #2a4a40 100%);
+}
+.explain-area .yao-yang {
+    width: clamp(48px, 7vw, 72px);
+    height: 8px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+}
+.explain-area .yao-yin {
+    width: clamp(48px, 7vw, 72px);
+    gap: 8px;
+}
+.explain-area .yao-yin-segment {
+    flex: 1;
+    width: auto;
+    height: 8px;
+    background: linear-gradient(180deg, #4a6a60 0%, #2a4a40 100%);
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+}
+.explain-area .dong-yao {
+    color: #c0392b !important;
+    background-color: #fdeaea;
+    border-radius: 4px;
+    padding: 1px 3px;
+}
+.explain-area .gua-yao-row {
+    height: 22px;
+    margin: 3px 0;
+}
+.explain-area .exp-yao-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
