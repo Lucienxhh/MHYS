@@ -8,18 +8,18 @@
 </head>
 <body>
 <div class="container">
-    <h1>🌺 梅花易数 <small>· 观象玩占</small></h1>
+    <h1>梅花易数 <small>· 观象玩占</small></h1>
 
     <!-- 起卦信息 -->
     <div class="card">
-        <div class="card-title">🕐 起卦信息</div>
+        <div class="card-title">起卦信息</div>
 
         <!-- ① 起卦方式 -->
         <div class="section-label">起卦方式</div>
         <div class="mode-switch" style="margin-bottom: 0;">
-            <select id="divinationMode" style="padding:6px 12px; border-radius:30px; border:1.5px solid #dfd1c4; background:white; font-size: 13px;">
-                <option value="date" selected>📆 日期起卦</option>
-                <option value="number">🔢 数字起卦</option>
+            <select id="divinationMode" style="padding:6px 12px; border-radius:30px; border:1.5px solid #e0e0e0; background:white; font-size: 13px;">
+                <option value="date" selected>日期起卦</option>
+                <option value="number">数字起卦</option>
             </select>
         </div>
 
@@ -40,9 +40,9 @@
         <div id="numberInputs" style="display:none; margin-top:12px;">
             <div class="section-label">起卦三数</div>
             <div class="input-row compact-row">
-                <div class="input-item compact-num"><label>数1</label><input type="number" id="inputNum1" min="1" placeholder="-"></div>
-                <div class="input-item compact-num"><label>数2</label><input type="number" id="inputNum2" min="1" placeholder="-"></div>
-                <div class="input-item compact-num"><label>数3</label><input type="number" id="inputNum3" placeholder="-"></div>
+                <div class="input-item compact"><label>数1（必选）</label><input type="number" id="inputNum1" min="1" placeholder="-"></div>
+                <div class="input-item compact"><label>数2（必选）</label><input type="number" id="inputNum2" min="1" placeholder="-"></div>
+                <div class="input-item compact"><label>数3（可选）</label><input type="number" id="inputNum3" placeholder="-"></div>
             </div>
             <!-- 时令参考面板 -->
             <div id="timeRefPanel" style="margin-top:10px;">
@@ -56,8 +56,8 @@
                 </div>
                 <!-- 当前时间（默认显示，时间和干支同一行） -->
                 <div id="timeRefNow" class="time-ref-content">
-                    <span id="timeRefNowDisplay" style="font-size:13px; color:#7a6453;">--</span>
-                    <span style="font-size:11px; color:#a18b7c; margin-left:6px;">用于断卦时令分析</span>
+                    <span id="timeRefNowDisplay" style="font-size:13px; color:#333;">--</span>
+                    <span style="font-size:11px; color:#999; margin-left:6px;">用于断卦时令分析</span>
                 </div>
                 <!-- 自定义时间（展开后显示） -->
                 <div id="timeRefCustom" class="time-ref-content" style="display:none;">
@@ -73,8 +73,8 @@
         </div>
 
         <!-- ④ 干支结果 -->
-        <div style="margin-top:12px; padding: 8px 12px; background: #f3ede7; border-radius: 8px; border: 1px solid #e0d5c8;">
-            <span id="displayGanzhi" style="font-size: 14px; color: #5a3f2e; font-weight: 500;">📌 干支：--</span>
+        <div style="margin-top:12px; padding: 8px 12px; background: #f9f9f9; border-radius: 8px; border: 1px solid #e0e0e0;">
+            <span id="displayGanzhi" style="font-size: 14px; color: #333; font-weight: 500;">干支：--</span>
         </div>
 
         <!-- 隐藏字段 -->
@@ -85,18 +85,18 @@
 
     <!-- 起卦按钮 -->
     <div style="text-align: center; margin-bottom: 20px;">
-        <button class="btn" id="calculateBtn" style="margin-top:0;">🌙 起卦</button>
+        <button class="btn" id="calculateBtn" style="margin-top:0;">起卦</button>
     </div>
 
     <!-- 结果卡片（起卦前隐藏） -->
     <div class="card result-area" id="resultCard" style="display:none;">
-        <div class="card-title">🔮 卦象推演</div>
+        <div class="card-title">卦象推演</div>
         <div id="resultContent"></div>
     </div>
 
     <!-- 解析面板折叠横条（起卦前隐藏） -->
     <div class="explain-collapsed-bar" id="explainCollapsedBar" style="display:none;">
-        <div class="explain-bar-content" id="explainBtn">🔍 卦象解析</div>
+        <div class="explain-bar-content" id="explainBtn">卦象解析</div>
     </div>
 
     <!-- 解析面板（起卦前隐藏） -->
@@ -107,7 +107,7 @@
     <!-- 起卦记录 -->
     <div class="card history-card">
         <div class="history-header" id="historyToggleBtn">
-            <span class="history-title">📜 起卦记录</span>
+            <span class="history-title">起卦记录</span>
             <span class="history-arrow">▾</span>
         </div>
         <div id="historyPanel" style="display:none;">

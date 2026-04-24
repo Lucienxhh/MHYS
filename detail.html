@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>梅花易数 · 起卦记录详情</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="container">
+    <h1>梅花易数 <small>· 起卦记录</small></h1>
+
+    <!-- 记录时间与关闭 -->
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
+        <span id="recordTime" class="history-detail-time-badge">--</span>
+        <button onclick="window.close()" class="history-close-btn">关闭</button>
+    </div>
+
+    <!-- 卦象推演 -->
+    <div class="card result-area" id="resultCard">
+        <div class="card-title">卦象推演</div>
+        <div id="resultContent"></div>
+    </div>
+
+    <!-- 卦象解析折叠条 -->
+    <div class="explain-collapsed-bar" id="explainCollapsedBar" style="display:block; margin-top:12px;">
+        <div class="explain-bar-content" id="explainBtn">卦象解析</div>
+    </div>
+
+    <!-- 卦象解析面板 -->
+    <div class="card explain-area" id="explainArea" style="display:none;">
+        <div id="explainContent"></div>
+    </div>
+
+    <!-- 无数据提示 -->
+    <div id="noDataHint" style="display:none;" class="card">
+        <p style="text-align:center; color:#b28b6f; padding:30px 0;">未找到记录数据，请从主页点击记录打开。</p>
+    </div>
+</div>
+
+<!-- 复用全部 JS 模块 -->
+<script src="js/data.js"></script>
+<script src="js/ganzhi.js"></script>
+<script src="js/divination.js"></script>
+<script src="js/render.js"></script>
+<script src="js/explain.js"></script>
+<script>
+(function() {
+    const HISTORY_DETAIL_KEY = 'mhys_history_detail';
+
+    // 从 localStorage 读取传入的参数
+    function loadDetailParams() {
+        try {
+            const raw = localStorage.getItem(HISTORY_DETAIL_KEY);
+            if (!raw) return null;
+            return JSON.parse(raw);
+        } catch(e) {
+            return null;
+        }
+    }
+
+    // 渲染页面
+    function renderDetail() {
+        const params = loadDetailParams();
+        if (!params || !params.entry) {
+            document.getElementById('resultCard').style.display = 'none';
+            document.getElementById('explainCollapsedBar').style.display = 'none';
+            document.getElementById('noDataHint').style.display = 'block';
+            return;
+        }
+
+        const entry = params.entry;
+        const p     = params.entry.params;
+
+        // 显示时间
+        document.getElementById('recordTime').innerHTML = (entry.time || '--');
+
+        // 渲染卦象推演
+        document.getElementById('resultContent').innerHTML = buildGuaResultHTML(p);
+
+        // 解析按钮
+        document.getElementById('explainBtn').onclick = function() {
+            var area  = document.getElementById('explainArea');
+            var bar   = area.previousElementSibling;
+            var ctn   = document.getElementById('explainContent');
+            if (area.style.display !== 'none') {
+                area.style.display  = 'none';
+                bar.style.display   = 'block';
+            } else {
+                ctn.innerHTML       = generateExplain(p);
+                area.style.display  = 'block';
+                bar.style.display   = 'none';
+                area.scrollIntoView({behavior:'smooth', block:'start'});
+            }
+        };
+    }
+
+    // 页面加载后渲染
+    renderDetail();
+})();
+</script>
+</body>
+</html>
